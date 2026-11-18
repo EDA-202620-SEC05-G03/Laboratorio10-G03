@@ -31,6 +31,10 @@
 from DataStructures.List import single_linked_list as lt
 from DataStructures.Map import map_linear_probing as m
 from DataStructures.Graph import digraph as G
+from DataStructures.List import array_list as al
+from DataStructures.Graph import dfs
+from DataStructures.Stack import stack as st
+from DataStructures.Graph import bfs
 
 import csv
 import time
@@ -250,23 +254,69 @@ def add_same_stop_connections(analyzer, service):
 def get_most_concurrent_stops(analyzer):
     """
     Obtiene las 5 paradas más concurridas
-    """
-    # TODO: Obtener las 5 paradas más concurridas, es decir, con más arcos salientes
-    ...
+    """    
+    grafo = analyzer['connections']
+    llaves = G.vertices(grafo)
+    
+    paradas = al.new_list()
+    for i in range(al.size(llaves)):
+        llave = al.get_element(llaves, i)
+        grado = G.degree(grafo, llave)
+        al.add_last(paradas, (llave, grado))
+    
+    al.merge_sort(paradas, sort_crit_get_most_concurrent_stops)
+    
+    cantidad = 5
+    if al.size(paradas) < cantidad:
+        cantidad = al.size(paradas)
+    
+    top = al.sub_list(paradas, 0, cantidad)
+    return top
+        
+def sort_crit_get_most_concurrent_stops(pareja_1, pareja_2):
+    return pareja_1[1] > pareja_2[1]
+    
 
 def get_route_between_stops_dfs(analyzer, stop1, stop2):
     """
     Obtener la ruta entre dos parada usando dfs
     """
-    # TODO: Obtener la ruta entre dos parada usando dfs
-    ...
+    graph = analyzer['connections']
+    
+    if not G.contains_vertex(graph, stop1) or not G.contains_vertex(graph, stop2):
+        return None
+    
+    visited_map = dfs.dfs(graph, stop1)
+    
+    if not dfs.has_path_to(stop2, visited_map):
+        return None
+    
+    path = dfs.path_to(stop2, visited_map)
+    route = al.new_list()
+    while not st.is_empty(path):
+        al.add_last(route, st.pop(path))
+        
+    return route
 
 def get_route_between_stops_bfs(analyzer, stop1, stop2):
     """
     Obtener la ruta entre dos parada usando bfs
     """
-    # TODO: Obtener la ruta entre dos parada usando bfs
-    ...
+    graph = analyzer["connections"]
+
+    if not G.contains_vertex(graph, stop1) or not G.contains_vertex(graph, stop2):
+        return None
+
+    visited_map = bfs.bfs(graph, stop1)
+
+    if not bfs.has_path_to(stop2, visited_map):
+        return None
+
+    path = bfs.path_to(stop2, visited_map)
+    route = al.new_list()
+    while not st.is_empty(path):
+        al.add_last(route, st.pop(path))
+    return route
 
 def get_shortest_route_between_stops(analyzer, stop1, stop2):
     """

@@ -168,13 +168,13 @@ def sub_list(my_list, pos_i, num_elements):
 # DEFAULT SORT CRITERIA
 # =====================
 
-def default_sort_criteria (element_1, element_2):
-    
-    is_sorted = False
-    if element_1 < element_2:
-        is_sorted = True
-    
-    return is_sorted
+def default_function(elemen_1, element_2):
+
+   if elemen_1 > element_2:
+      return 1
+   elif elemen_1 < element_2:
+      return -1
+   return 0
 
 # ==============
 # SELECTION SORT

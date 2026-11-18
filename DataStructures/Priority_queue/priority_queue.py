@@ -1,5 +1,5 @@
 from DataStructures.List import array_list as al
-from DataStructures.Heap import pq_entry as pqe
+from DataStructures.Priority_queue import pq_entry as pqe
 
 
 def default_compare_higher_value(father_node, child_node):

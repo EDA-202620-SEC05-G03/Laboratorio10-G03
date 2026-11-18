@@ -1,5 +1,6 @@
 from DataStructures.Map import map_linear_probing as mp
 from DataStructures.Graph import vertex as V
+from DataStructures.List import array_list as lt
 
 def new_graph(order):
     grafo = {'vertices': mp.new_map(order, 0.5),
@@ -35,7 +36,51 @@ def add_edge(my_graph, key_u, key_v, weight=1.0):
         my_graph['num_edges'] += 1
 
     return my_graph
+
+def degree(my_graph, key_u):
+    vertice = mp.get(my_graph['vertices'], key_u)
+    if vertice is None:
+        raise Exception('El vertice no existe')
+    return V.degree(vertice)
+
+def adjacents(my_graph, key_u):
+    vertice = mp.get(my_graph['vertices'], key_u)
+    if vertice is None:
+        raise Exception('El vertice no existe')
+    mapa_adj = V.get_adjacents(vertice)
+    return mp.key_set(mapa_adj)
+
+def vertices(my_graph):
+    return mp.key_set(my_graph['vertices'])
+
+def edges_vertex(my_graph, key_u):
+    vertice = mp.get(my_graph['vertices'], key_u)
+    if vertice is None:
+        raise Exception('El vertice no existe')
+    mapa_adj = V.get_adjacents(vertice)
     
-    
+    lista = lt.new_list()
+    for casilla in mapa_adj['table']['elements']:
+        if casilla['key'] is not None:
+            arco = casilla['value']
+            lt.add_last(lista, (key_u, arco['to'], arco['weight']))
+    return lista 
+
+def get_vertex(my_graph, key_u):
+    return mp.get(my_graph['vertices'], key_u)
+
+def update_vertex_info(my_graph, key_u, new_info_u):
+    vertice = mp.get(my_graph['vertices'], key_u)
+    if vertice is not None:
+        V.set_value(vertice, new_info_u)
+    return my_graph
+
+def get_vertex_information(my_graph, key_u):
+    vertice = mp.get(my_graph['vertices'], key_u)
+    if vertice is None:
+        raise Exception('El vertice no existe')
+    return V.get_value(vertice)
 
 
+        
+        

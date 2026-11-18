@@ -28,6 +28,7 @@
 import sys
 import threading
 from App import logic
+from DataStructures.List import array_list as lt
 
 """
 La vista se encarga de la interacción con el usuario.
@@ -74,16 +75,69 @@ def option_one(cont):
     print('El limite de recursion actual: ' + str(sys.getrecursionlimit()))
 
 def option_two(cont):
-    # TODO: Imprimir los resultados de la opción 2
-    ...
+    top = logic.get_most_concurrent_stops(cont)
+    print('\n------- OPCIÓN 2 --------')
+    print('Las paradas más concurridas son: ')
+    for i in range(lt.size(top)):
+        llave, grado = lt.get_element(top, i)
+        print(f"{i + 1}. '{llave}': {grado} conexiones")
+        
+def print_route(route):
+    bus_actual = None
+    for i in range(lt.size(route)):
+        vertice = lt.get_element(route, i)
+
+        parada = ""
+        bus = ""
+        paso_guion = False
+        for letra in vertice:
+            if letra == '-' and not paso_guion:
+                paso_guion = True
+            elif not paso_guion:
+                parada = parada + letra
+            else:
+                bus = bus + letra
+
+        if bus != bus_actual:
+            if bus_actual is None:
+                print(f"\n--- Tomar bus '{bus}' desde '{vertice}' ---")
+            else:
+                print(f"\n--- Cambiar a bus '{bus}' en la parada '{parada}' ---")
+            bus_actual = bus
+
+        print(parada, end=" -> ")
+    print()
 
 def option_three(cont):
-    # TODO: Imprimir los resultados de la opción 3
-    ...
+    stop1 = input("Parada inicial: ")
+    stop2 = input("Parada destino: ")
+    
+    print(f"\n------- OPCIÓN 3 --------")
+    print(f"Parada inicial: {stop1}")
+    print(f"Parada destino: {stop2}")
+    
+    route = logic.get_route_between_stops_dfs(cont, stop1, stop2)
+    
+    if route is None:
+        print(f"\nNo existe una ruta entre {stop1} y {stop2}")
+    else:
+        print_route(route)
+    
 
 def option_four(cont):
-    # TODO: Imprimir los resultados de la opción 4
-    ...
+    stop1 = input("Parada inicial: ")
+    stop2 = input("Parada destino: ")
+        
+    print(f"\n------- OPCIÓN 4 --------")
+    print(f"Parada inicial: {stop1}")
+    print(f"Parada destino: {stop2}")
+        
+    route = logic.get_route_between_stops_bfs(cont, stop1, stop2)
+        
+    if route is None:
+        print(f"\nNo existe una ruta entre {stop1} y {stop2}")
+    else:
+        print_route(route)
 
 def option_five(cont):
     # TODO: Imprimir los resultados de la opción 5
