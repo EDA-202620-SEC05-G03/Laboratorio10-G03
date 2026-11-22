@@ -140,12 +140,36 @@ def option_four(cont):
         print_route(route)
 
 def option_five(cont):
-    # TODO: Imprimir los resultados de la opción 5
-    ...
+    stop1 = input('Parada inicial: ')
+    stop2 = input('Parada destino: ')
+    
+    print(f"\n------- OPCIÓN 5 --------")
+    print(f"Parada inicial: {stop1}")
+    print(f"Parada destino: {stop2}")
+    
+    route, distance = logic.get_shortest_route_between_stops(cont, stop1, stop2)
+    
+    if route is None:
+        print(f"\nNo existe una ruta entre {stop1} y {stop2}")
+    else:
+        print_route(route)
+        print(f"\nDistancia total: {distance:.3f} km")
 
 def option_six(cont):
-    # (Opcional) TODO: Imprimir los resultados de la opción 6
-    ...
+    if cont['paths'] is None:
+        print(f"\nPrimero ejecuta la opción 5 para calcular la ruta minima.")
+        return
+    
+    origen = cont['paths']['source']
+    destino = input(f"Parada destino (origen {origen}): ")
+    
+    print(f"----- OPCION 6 ------")
+    archivo = logic.show_calculated_shortest_route(cont, destino)
+    
+    if archivo is None:
+        print(f"\nNo existe una ruta entre {origen} y {destino}")
+    else:
+        print(f"Mapa guardado en {archivo}. Abralo desde su navegador")
 
 
 """

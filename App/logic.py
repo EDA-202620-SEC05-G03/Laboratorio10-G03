@@ -35,10 +35,12 @@ from DataStructures.List import array_list as al
 from DataStructures.Graph import dfs
 from DataStructures.Stack import stack as st
 from DataStructures.Graph import bfs
+from DataStructures.Graph import dijkstra as DJK
 
 import csv
 import time
 import os
+import folium
 
 data_dir = os.path.dirname(os.path.realpath('__file__')) + '/Data/'
 
@@ -322,16 +324,81 @@ def get_shortest_route_between_stops(analyzer, stop1, stop2):
     """
     Obtener la ruta mínima entre dos paradas
     """
-    # TODO: Obtener la ruta mínima entre dos paradas
-    # Nota: Tenga en cuenta que el debe guardar en la llave
-    #       analyzer['paths'] el resultado del algoritmo de Dijkstra
-    ...
+    graph = analyzer['connections']
+    
+    if not G.contains_vertex(graph, stop1) or not G.contains_vertex(graph, stop2):
+        return None, None
+    
+    analyzer['paths'] = DJK.dijkstra(graph, stop1)
+    
+    camino = DJK.path_to(stop2, analyzer['paths'])
+    
+    if camino is None:
+        return None, None
+    
+    ruta = al.new_list()
+    while not st.is_empty(camino):
+        al.add_last(ruta, st.pop(camino))
+    
+    distance = DJK.dist_to(stop2, analyzer['paths'])
+    return ruta, distance
+    
 
 def show_calculated_shortest_route(analyzer, destination_stop):
-    # (Opcional) TODO: Mostrar en un mapa la ruta mínima entre dos paradas usando folium
-    ...
+    
+    if analyzer['paths'] is None:
+        return None
+    
+    camino = DJK.path_to(destination_stop, analyzer['paths'])
+    if camino is None:
+        return None
 
+    mapa = folium.Map(
+        location=(1.28143, 103.8499),
+        zoom_start=12,
+        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+        attr="Esri"
+    )
+    puntos = []
+    bus_actual = None
+    
+    while not st.is_empty(camino):
+        vertice = st.pop(camino)
+        
+        parada = ""
+        bus = ""
+        
+        paso_guion = False
+        
+        for letra in vertice:
+            if letra == '-' and not paso_guion:
+                paso_guion = True
+            elif not paso_guion:
+                parada = parada + letra
+            else:
+                bus = bus + letra
+        
+        info = m.get(analyzer['stops'], parada)
+        punto = (float(info['Latitude']), float(info['Longitude']))
+        puntos.append(punto)
+        
+        if bus_actual is None:
+            folium.Marker(punto, tooltip=f"Inicio: {vertice}",
+                          icon=folium.Icon("Green")).add_to(mapa)
+        elif bus != bus_actual:
+            folium.Marker(punto, tooltip=f"Cambiar a bus {bus} en {parada}",
+                          icon=folium.Icon("blue")).add_to(mapa)
+        else:
+            folium.CircleMarker(punto, radius=3, tooltip=vertice).add_to(mapa)
+        bus_actual = bus
+        
+    folium.Marker(puntos[-1], tooltip=f"Fin: {destination_stop}",
+                  icon=folium.Icon("red")).add_to(mapa)
+    folium.PolyLine(puntos).add_to(mapa)
 
+    nombre_archivo = "ruta_minima.html"
+    mapa.save(nombre_archivo)
+    return nombre_archivo   
 
 
 # ___________________________________________________

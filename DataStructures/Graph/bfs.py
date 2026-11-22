@@ -43,4 +43,3 @@ def path_to(key_v, visited_map):
         st.push(camino, actual)
         actual = mp.get(visited_map, actual)['edge_from']
     return camino
-                

@@ -57,14 +57,7 @@ def edges_vertex(my_graph, key_u):
     vertice = mp.get(my_graph['vertices'], key_u)
     if vertice is None:
         raise Exception('El vertice no existe')
-    mapa_adj = V.get_adjacents(vertice)
-    
-    lista = lt.new_list()
-    for casilla in mapa_adj['table']['elements']:
-        if casilla['key'] is not None:
-            arco = casilla['value']
-            lt.add_last(lista, (key_u, arco['to'], arco['weight']))
-    return lista 
+    return mp.value_set(V.get_adjacents(vertice))
 
 def get_vertex(my_graph, key_u):
     return mp.get(my_graph['vertices'], key_u)
